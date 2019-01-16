@@ -1,0 +1,13 @@
+{
+    "appPort": 5001,
+    "appUri": "localhost:5001",
+    "avatar": {
+        "avatarPath": "http://localhost:5001/usersAvatars/",
+        "avatarDefaultLocation": "public\\usersAvatars\\default_avatar.png",
+        "avatarLocation": "public\\usersAvatars\\"
+    },
+    "postImage": {
+        "imagePath": "http://localhost:5001/postImages/",
+        "imageLocation": "public\\postImages\\"
+    }
+}
