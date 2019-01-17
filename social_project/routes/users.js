@@ -40,15 +40,15 @@ async function sendFriendRequest(senderEmail, receiverEmail){
     const receiver = await getUsers(receiverEmail);
     const snd = sender[0];
     const rec = receiver[0];
-    const friendRegObj = {};
+    const friendReqObj = {};
 
     if(!receiverEmail || !rec){
         throw new Error("No such user")
     }
-    friendRegObj.userEmail = snd.userEmail;
-    friendRegObj.userName = snd.userName;
+    friendReqObj.userEmail = snd.userEmail;
+    friendReqObj.userName = snd.userName;
 
-    rec.friendRequests.push(snd.userEmail);
+    rec.friendRequests.push(friendReqObj);
 
     return rec.save();
 };
@@ -62,23 +62,38 @@ async function checkFriendRequests(userEmail){
 }
 
 async function acceptFriendRequest(receiverEmail, senderEmail){
-    const receiver = await getUsers(receiverEmail);
-    const sender = await getUsers(senderEmail);
-    const rec = receiver[0];
-    const snd = sender[0];
-    const requests = user.friendRequests;
-
     if(!senderEmail){
         throw new Error("No such request");
     }
 
-    if(!requests.includes(senderEmail)){
-        throw new Error("No such request");
+    const receiver = await getUsers(receiverEmail);
+    const sender = await getUsers(senderEmail);
+    const rec = receiver[0];
+    const snd = sender[0];
+    const senderObj = {};
+    const receiverObj = {};
+    const requests = rec.friendRequests;
+    let foundRequest = false;
+
+    for(let i = 0; i < requests.length; i++){
+        if(requests[i].userEmail === senderEmail){
+            foundRequest = true;
+
+            senderObj.userEmail = snd.userEmail;
+            senderObj.userName = snd.userName;
+
+            receiverObj.userEmail = rec.userEmail;
+            receiverObj.userName = rec.userName;
+
+            rec.userFriends.push(senderObj);
+            snd.userFriends.push(receiverObj);
+            rec.friendRequests.pull(senderObj);
+        }
     }
 
-    rec.userFriends.push(senderEmail);
-    snd.userFriends.push(receiverEmail);
-    rec.friendRequests.pull(senderEmail);
+    if(!foundRequest){
+        throw new Error("No such request");
+    }
 
     rec.save();
     snd.save();

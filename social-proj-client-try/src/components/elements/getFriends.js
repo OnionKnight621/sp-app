@@ -13,10 +13,10 @@ export class GetFriends extends Component{
       this.getFriends = this.getFriends.bind(this)
     }
   
-    renderFriends(){
+    renderFriends({userEmail, userName}){
       return (
-        <div>
-          {this.state.userFriends}
+        <div key={userEmail}>
+          Name: {userName} | email: {userEmail} <br/>
         </div>
       )
     }
