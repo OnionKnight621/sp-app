@@ -40,10 +40,13 @@ async function sendFriendRequest(senderEmail, receiverEmail){
     const receiver = await getUsers(receiverEmail);
     const snd = sender[0];
     const rec = receiver[0];
+    const friendRegObj = {};
 
     if(!receiverEmail || !rec){
         throw new Error("No such user")
     }
+    friendRegObj.userEmail = snd.userEmail;
+    friendRegObj.userName = snd.userName;
 
     rec.friendRequests.push(snd.userEmail);
 
