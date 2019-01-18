@@ -13,12 +13,12 @@ export class CheckFriendsRequest extends Component{
       this.getFriendsRequests = this.getFriendsRequests.bind(this)
     }
   
-    renderFriendsRequests(){
-      return (
-        <div>
-          {this.state.friendRequests}
-        </div>
-      )
+    renderFriendsRequests({userEmail, userName}){
+        return (
+            <div key={userEmail}>
+                Name: {userName} | email: {userEmail} <br/>
+            </div>
+        )
     }
   
     getFriendsRequests(){

@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors')
 const mongoose = require('mongoose');
 const mongoStore = require('connect-mongo')(expressSession);
+const morgan = require('morgan');
 
 const config = require('./config/default');
 const users = require('./routes/users');
@@ -41,7 +42,8 @@ app.use(expressSession({
     rolling: true,
     cookie: {maxAge: 2400000}
 }));
-app.use(logger)
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms [:date[clf]]'));
+app.use(logger);
 app.use('/users', users);
 app.use('/login', login);
 app.use(checkSession);

@@ -171,6 +171,7 @@ class App extends Component {
 
   render() {
     return (
+      <Router>
       <div className="App">
         <div className="container-fluid">
           <Loader loading={this.state.loading}>
@@ -196,6 +197,7 @@ class App extends Component {
           </Loader>
         </div>
       </div>
+      </Router>
     );
   }
 }

@@ -40,7 +40,7 @@ export class Register extends Component{
     submit(e){
       e.preventDefault();
       let {user} = this.state;
-      let nickRe = /^[a-z]{3,}$/i;
+      let nickRe = /^[a-z0-9]{3,}$/i;
       let passRe = /^[0-9a-z]{6,}$/;
       let emailRe = /^([a-zA-Z0-9_\-\.]+){3,}@([a-zA-Z0-9_\-\.]+){2,}\.([a-z]{2,5}){1,3}$/;
       if(!emailRe.test(user.userEmail)){
