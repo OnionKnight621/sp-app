@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import '../../App.css';
 import {Loader} from '../utils/loader';
 
+import {DeleteFriend} from './deleteFriend';
+
 export class GetFriends extends Component{
     constructor(props){
       super(props);
@@ -16,7 +18,7 @@ export class GetFriends extends Component{
     renderFriends({userEmail, userName}){
       return (
         <div key={userEmail}>
-          Name: {userName} | email: {userEmail} <br/>
+          Name: {userName} | email: {userEmail}<DeleteFriend userEmail={userEmail} /> <br/>
         </div>
       )
     }

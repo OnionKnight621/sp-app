@@ -59,7 +59,7 @@ async function checkFriendRequests(userEmail){
     const requests = user[0].friendRequests;
 
     return await requests;
-}
+};
 
 async function acceptFriendRequest(receiverEmail, senderEmail){
     if(!senderEmail){
@@ -101,6 +101,24 @@ async function acceptFriendRequest(receiverEmail, senderEmail){
     return rec.userFriends;
 };
 
+async function deleteFriend(userEmail, friendEmail){
+    if(!friendEmail){
+        throw new Error("No friend to delete");
+    }
+    const user = await getUsers(userEmail);
+    const friend = await getUsers(friendEmail);
+    const usr = user[0];
+    const frnd = friend[0];
+
+    usr.userFriends.splice(usr.userFriends.indexOf(friendEmail), 1);
+    frnd.userFriends.splice(frnd.userFriends.indexOf(userEmail), 1);
+
+    usr.save();
+    frnd.save();
+
+    return usr.userFriends;
+};
+
 router.get('/getusers', async (req, res) => {
     let result;
     let userEmail;
@@ -128,7 +146,20 @@ router.get('/getfriends', async (req, res) => {
     let friends = result[0].userFriends;
 
     res.status(200).json({userFriends: friends})
-})
+});
+
+router.delete('/deletefriend', async (req, res) => {
+    let result;
+    const friendEmail = req.body.friendEmail;
+
+    try{
+        result = await deleteFriend(req.session.userEmail, friendEmail);
+        return res.status(200).json({message: "Friend was deleted", result: result});
+    }
+    catch(exeption){
+        return res.status(400).json({error: exeption.message})
+    }
+});
 
 router.post('/sendfriendrequest', checkSession, errorHandler, async (req, res) => {
     let result;
@@ -138,7 +169,7 @@ router.post('/sendfriendrequest', checkSession, errorHandler, async (req, res) =
         return res.status(200).json({message: "Request was sent", result: result});
     }
     catch(exeption){
-        return res.status(400).json({error: error.message})
+        return res.status(400).json({error: exeption.message})
     }
 })
 

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import '../../App.css';
 import {Loader} from '../utils/loader';
 
-export class AcceptFriendRequest extends Component{
+export class DeleteFriend extends Component{
     constructor(props){
       super(props);
       this.state = {
@@ -10,19 +10,19 @@ export class AcceptFriendRequest extends Component{
         response: '',
         userEmail: props.userEmail
       }
-      this.submit = this.submit.bind(this);
+      this.submit = this.submit.bind(this)
     }
   
     submit(e){
       e.preventDefault();
-      fetch('http://localhost:5001/users/acceptfriendrequest',{
-        method: 'POST',
+      fetch('http://localhost:5001/users/deletefriend',{
+        method: 'DELETE',
         headers: {
           'Accept': 'application/json',
           'Content-Type':'application/json'
         },
         body: JSON.stringify({
-          'friend': `${this.state.userEmail}`
+          'friendEmail': `${this.state.userEmail}`
         })
       })
       .then(res => res.json())
@@ -41,7 +41,7 @@ export class AcceptFriendRequest extends Component{
     render(){
       return(
         <div>
-          <button type="submit" className="btn" onClick={this.submit}>+</button>
+          <button type="submit" className="btn" onClick={this.submit}>Delete</button>
         </div>
       )
     }

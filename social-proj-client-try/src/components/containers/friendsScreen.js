@@ -3,8 +3,6 @@ import '../../App.css';
 import {Loader} from '../utils/loader';
 
 import {GetFriends} from '../elements/getFriends';
-import {CheckFriendsRequest} from '../elements/checkFriendRequest';
-import {AcceptFriendRequest} from '../elements/acceptFriendRequest';
 import {SendFriendRequest} from '../elements/sendFriendRequest';
 
 import {FriendsRequests} from '../elements/friendsRequests';
