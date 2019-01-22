@@ -7,6 +7,8 @@ import {CheckFriendsRequest} from '../elements/checkFriendRequest';
 import {AcceptFriendRequest} from '../elements/acceptFriendRequest';
 import {SendFriendRequest} from '../elements/sendFriendRequest';
 
+import {FriendsRequests} from '../elements/friendsRequests';
+
 // Friends container
 export class FriendsScreen extends Component{
     render(){
@@ -16,8 +18,7 @@ export class FriendsScreen extends Component{
             <GetFriends/>
           </div>
           <div className="col s4">
-            <CheckFriendsRequest/><br/>
-            <AcceptFriendRequest/>
+            <FriendsRequests/>
           </div>
           <div className="col s4">
             <SendFriendRequest/>

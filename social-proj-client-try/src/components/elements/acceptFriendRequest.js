@@ -9,7 +9,8 @@ export class AcceptFriendRequest extends Component{
       super(props);
       this.state = {
         userEmail: '',
-        response: ''
+        response: '',
+        userEmail: props.userEmail
       }
       this.onEmailChange = this.onEmailChange.bind(this);
       this.submit = this.submit.bind(this)
@@ -47,11 +48,11 @@ export class AcceptFriendRequest extends Component{
     render(){
       return(
         <div>
-          <form>
-            <h2>Accept friend request</h2>
-            <EmailInput onChange={this.onEmailChange}/>
-            <button type="submit" className="btn" onClick={this.submit}>Accept</button>
-          </form>
+          {/* <form> */}
+            {/* <h2>Accept friend request</h2> */}
+            {/* <EmailInput onChange={this.onEmailChange}/> */}
+            <button type="submit" className="btn" onClick={this.submit}>+</button>
+          {/* </form> */}
         </div>
       )
     }

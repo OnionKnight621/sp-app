@@ -14,14 +14,19 @@ export class FriendsRequests extends Component{
         }
 
         this.renderFriendsRequests = this.renderFriendsRequests.bind(this);
-        this.getFriendsRequests = this.getFriendsRequests.bind(this)
-        this.submit = this.submit.bind(this);
+        this.getFriendsRequests = this.getFriendsRequests.bind(this);
+        this.handleAcceptingFriendReq = this.handleAcceptingFriendReq.bind(this);
+    }
+
+    handleAcceptingFriendReq(){
+        console.log("rerender");
+        this.getFriendsRequests();
     }
 
     renderFriendsRequests({userEmail, userName}){
         return (
             <div key={userEmail}>
-                Name: {userName} | email: {userEmail} <br/>
+                Name: {userName} | email: {userEmail}<AcceptFriendRequest userEmail={userEmail} onClick={this.handleAcceptingFriendReq} /><br/>
             </div>
         )
     }
