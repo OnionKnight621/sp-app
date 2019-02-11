@@ -26,7 +26,7 @@ mongoose.connect(`mongodb://localhost/socialproj`, {useNewUrlParser: true})
 
 app.use(express.static(__dirname + '/public'));
 // full path to builded react client
-app.use(express.static('../social-proj-client-try/build'));
+app.use(express.static('../sp-client/build'));
 
 app.use(cors())
 app.use(bodyParser.json());
