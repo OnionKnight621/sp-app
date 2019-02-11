@@ -11,7 +11,7 @@ const router = express.Router();
 const imagePath = config.postImage.imagePath;
 
 async function addImage(postId, id){
-    const post = await getPostById(postId)
+    const post = await getPostById(postId);
 
     post.postImage = id;
 
@@ -23,7 +23,7 @@ function createImgUri(imgId){
     let imageUri = `${imagePath}${imgId}`;
 
     return imageUri;
-}
+};
 
 const mapPhotoTokenToUrl = mapTokenToUrl('postImage', 'postImageUri', createImgUri);
 
@@ -35,7 +35,7 @@ async function createPost(userEmail, userId, postContent, postImage, postType, n
         postImage: postImage,
         postType: postType,
         numberOfComments: numberOfComments,
-        postTime: Date.now()
+        postTime: Date.now(),
     })
 
     return post.save();
@@ -52,10 +52,10 @@ async function getPost(userEmail, searchingUserEmail, startOffset, limit){
     }
 
     let postType = {};
-    const user = await getUsers(searchingUser)
-    const usr = user[0];
+    const userArr = await getUsers(searchingUser);
+    const user = userArr[0];
 
-    if(!usr.userFriends.includes(userEmail)){
+    if(!user.userFriends.includes(userEmail)){
         postType = {postType: 'public'};
     }
 
@@ -64,17 +64,27 @@ async function getPost(userEmail, searchingUserEmail, startOffset, limit){
     }
 
     const posts = await UserPost.aggregate([
-        {$sort: {userEmail: 1}},
-        {$match: {$and: [email, postType]}},
-        {$addFields: {
-            id: {$toString: "$_id"}
-        }},
-        {$lookup: {
-            from: 'usercomments',
-            localField: 'id',
-            foreignField: 'postId',
-            as: 'comments'
-        }},
+        {
+            $sort: {userEmail: 1}
+        },
+        {
+            $match: {
+                $and: [email, postType]
+            }
+        },
+        {
+            $addFields: {
+                id: {$toString: "$_id"}
+            }
+        },
+        {
+            $lookup: {
+                from: 'usercomments',
+                localField: 'id',
+                foreignField: 'postId',
+                as: 'comments'
+            }
+        },
         // {$unwind: {
         //     path: "$comments", preserveNullAndEmptyArrays: true
         // }},
@@ -103,9 +113,15 @@ async function getPost(userEmail, searchingUserEmail, startOffset, limit){
         //     id: 1,
         //     comments: "$comments"
         // }},
-        {$sort: {postTime: -1}},
-        {$skip: startOffset},
-        {$limit: limit}
+        {
+            $sort: {postTime: -1}
+        },
+        {
+            $skip: startOffset
+        },
+        {
+            $limit: limit
+        },
     ])
 
     return await posts;
@@ -119,23 +135,23 @@ let avatarUpload = async function(req, res, next){
     try{
         upload(req, res, (err) =>{
             if (err){
-                return next(new Error(err))
+                return next(new Error(err));
             }
             if(!req.file){
-                return next(new Error("No files were uploaded"))
+                return next(new Error("No files were uploaded"));
             }
             addImage(req.query.postId, req.file.filename)
             .then(() => {
                 return next();
             })
             .catch(error => {
-                return next(new Error(error))
+                return next(new Error(error));
             })
         });
     }catch (err){
         return next(new Error(err));
     }
-}
+};
 
 router.post('/addpostimage', avatarUpload, errorHandler, async (req, res) => {
     res.status(200).json({message: "File uploaded"});

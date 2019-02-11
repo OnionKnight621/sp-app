@@ -9,16 +9,23 @@ export class GetFriends extends Component{
       super(props);
       this.state = {
         userFriends: [],
+        showDeleting: false
       }
   
       this.renderFriends = this.renderFriends.bind(this);
-      this.getFriends = this.getFriends.bind(this)
+      this.getFriends = this.getFriends.bind(this);
+      this.showDelete = this.showDelete.bind(this);
+    }
+
+    showDelete(){
+      this.setState({showDeleting: !this.state.showDeleting})
     }
   
     renderFriends({userEmail, userName}){
       return (
-        <div key={userEmail}>
-          Name: {userName} | email: {userEmail}<DeleteFriend userEmail={userEmail} /> <br/>
+        <div key={userEmail} onClick={this.showDelete}>
+          Name: {userName} | email: {userEmail}
+          {this.state.showDeleting && <DeleteFriend userEmail={userEmail} />} <br/>
         </div>
       )
     }

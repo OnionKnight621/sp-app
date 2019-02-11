@@ -3,34 +3,34 @@ const mongoose = require('mongoose');
 let UserPost = mongoose.model("userPost", new mongoose.Schema({
     userEmail: {
         type: String,
-        required: true
+        required: true,
     },
     userId: {
         type: String,
-        required: true
+        required: true,
     },
     postContent: {
         type: String,
         required: true,
         minlength: 1,
-        maxlength: 255
+        maxlength: 255,
     },
     postImage: {
         type: String,
-        default: ''
+        default: '',
     },
     postType: {
         type: String,
         required: true,
-        default: 'private'
+        default: 'private',
     },
     numberOfComments: {
         type: Number,
-        default: 0
+        default: 0,
     },
     postTime: {
         type: Date,
-        default: Date.now()
+        default: Date.now(),
     }
 }));
 

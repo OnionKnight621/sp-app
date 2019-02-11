@@ -11,15 +11,15 @@ async function createComment(userId, userEmail, postId, answerOnComment, comment
         postId: postId,
         answerOnComment: answerOnComment,
         commentContent: commentContent,
-        commentTime: Date.now()
+        commentTime: Date.now(),
     });
 
     const post = await getPostById(postId);
     post.numberOfComments++;
 
-    post.save()
+    post.save();
 
-    comment.save()
+    comment.save();
     
     return comment;
 }
@@ -32,7 +32,7 @@ router.post('/createcomment', async (req, res) => {
         return res.status(200).json({message: "Your comment was succesfully created", comment: result});
     }
     catch(exeption){
-        return res.status(400).json({error: exeption})
+        return res.status(400).json({error: exeption});
     }  
 });
 

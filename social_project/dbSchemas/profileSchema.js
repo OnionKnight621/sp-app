@@ -6,13 +6,13 @@ const UserProfile = mongoose.model('UserProfile', new mongoose.Schema({
             type: String, 
             required: true,
             minlength: 3,
-            maxlength: 30
+            maxlength: 30,
         },
         lastName: {
             type: String, 
             required: true,
             minlength: 3,
-            maxlength: 30
+            maxlength: 30,
         },
         fullName: {
             type: String, 
@@ -20,38 +20,37 @@ const UserProfile = mongoose.model('UserProfile', new mongoose.Schema({
     },
     userEmail: {
         type: String,
-        required: true
+        required: true,
     },
     userAge: {
         type: Number,
-        default: 0
+        default: 0,
     },
     userAvatar: {
         type: String,
-        default: "default_avatar.png"
+        default: "default_avatar.png",
     },
     userId: {
         type: String,
-        required: true
+        required: true,
     },
     userCellPhone: {
-        type: String
+        type: String,
     },
     profileType: {
         type: String,
         required: true,
         default: 'private',
-        enum: ['private', 'public']
+        enum: ['private', 'public'],
     },
     userInformation: {
         type: String,
         minlength: 1,
-        maxlength: 255
+        maxlength: 255,
     },
     userAddress: {
-        type: String
+        type: String,
     }
-
 }));
 
 exports.UserProfile = UserProfile;

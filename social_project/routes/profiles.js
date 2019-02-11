@@ -11,7 +11,7 @@ const router = express.Router();
 const avatarPath = config.avatar.avatarPath;
 
 async function addAvatar(userEmail, id, profileType){
-    const profile = await getProfileByType(userEmail, profileType)
+    const profile = await getProfileByType(userEmail, profileType);
 
     profile.userAvatar = id;
 
@@ -37,10 +37,10 @@ async function getProfiles(userEmail) {
 }
 
 async function getProfileByType(userEmail, profileType){
-    let type = {profileType: 'private'}
-    let email = {userEmail: userEmail}
+    let type = {profileType: 'private'};
+    let email = {userEmail: userEmail};
     if(profileType){
-        type = {profileType: profileType}
+        type = {profileType: profileType};
     }
 
     const profile = await UserProfile.findOne({userEmail: userEmail, profileType: profileType})
@@ -61,7 +61,7 @@ async function createUserProfile(firstName, lastName, userEmail, userAge, userId
         userName: {
             firstName: firstName,
             lastName: lastName,
-            fullName: `${firstName} ${lastName}`
+            fullName: `${firstName} ${lastName}`,
         },
         userEmail: userEmail,
         userAge: userAge,
@@ -69,7 +69,7 @@ async function createUserProfile(firstName, lastName, userEmail, userAge, userId
         userCellPhone: userCellPhone,
         profileType: profileType,
         userInformation: userInformation,
-        userAddress: userAddress
+        userAddress: userAddress,
     });
 
     const profiles = await getProfiles(userEmail);
@@ -173,23 +173,23 @@ let avatarUpload = async function(req, res, next){
         }
         upload(req, res, (err) =>{
             if (err){
-                return next(new Error(err))
+                return next(new Error(err));
             }
             if(!req.file){
-                return next(new Error("No files were uploaded"))
+                return next(new Error("No files were uploaded"));
             }
             addAvatar(req.session.userEmail, req.file.filename, req.query.profileType)
             .then(() => {
                 return next();
             })
             .catch(error => {
-                return next(new Error(error))
+                return next(new Error(error));
             })
         });
     }catch (err){
         return next(new Error(err));
     }
-}
+};
 
 router.post('/addavatar', avatarUpload, errorHandler, async (req, res) => {
     res.status(200).json({message: "File uploaded"});
@@ -210,7 +210,7 @@ router.get('/getprofiles', async (req, res) => {
     catch(exeption){
         return res.status(400).json({error: exeption.message});
     }
-})
+});
 
 router.post('/createprofile', async (req, res) => {
     let result;
@@ -234,6 +234,6 @@ router.put('/editprofile', async (req, res) => {
     catch(exeption){
         res.status(400).json({error: exeption});
     }
-})
+});
 
 module.exports = router;

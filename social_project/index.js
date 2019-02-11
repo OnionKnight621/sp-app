@@ -30,6 +30,7 @@ app.use(express.static('../social-proj-client-try/build'));
 
 app.use(cors())
 app.use(bodyParser.json());
+app.set('trust proxy', 1) // trust first proxy
 app.use(expressSession({
     store: new mongoStore({
         mongooseConnection: mongoose.connection,
@@ -40,10 +41,13 @@ app.use(expressSession({
     resave: false,
     saveUninitialized: false,
     rolling: true,
-    cookie: {maxAge: 2400000}
+    cookie: {
+        maxAge: 2400000,
+        secure: true,
+    }
 }));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms [:date[clf]]'));
-app.use(logger);
+// app.use(logger);
 app.use('/users', users);
 app.use('/login', login);
 app.use(checkSession);

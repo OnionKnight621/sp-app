@@ -3,6 +3,7 @@ import '../../App.css';
 import {Loader} from '../utils/loader';
 
 import {AcceptFriendRequest} from './acceptFriendRequest';
+import {RejectFriendRequest} from './rejectFriendRequest';
 
 export class FriendsRequests extends Component{
     constructor(props){
@@ -26,7 +27,7 @@ export class FriendsRequests extends Component{
     renderFriendsRequests({userEmail, userName}){
         return (
             <div key={userEmail}>
-                Name: {userName} | email: {userEmail}<AcceptFriendRequest userEmail={userEmail} onClick={this.handleAcceptingFriendReq} /><br/>
+                Name: {userName} | email: {userEmail}<AcceptFriendRequest userEmail={userEmail} onClick={this.handleAcceptingFriendReq} /> <RejectFriendRequest userEmail={userEmail} /><br/>
             </div>
         )
     }

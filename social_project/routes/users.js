@@ -9,13 +9,13 @@ async function createUser(userName, userPassword, userEmail){
     const user = new User({
         userName: userName,
         userPassword: userPassword,
-        userEmail: userEmail
+        userEmail: userEmail,
     });
 
     const users = await getUsers(userEmail);
     const firstUser = users[0];
     if(firstUser){
-        throw new Error("User with such email already exist")
+        throw new Error("User with such email already exist");
     }
     
     return user.save();
@@ -36,21 +36,24 @@ async function getUsers(userEmail){
 };
 
 async function sendFriendRequest(senderEmail, receiverEmail){
-    const sender = await getUsers(senderEmail);
-    const receiver = await getUsers(receiverEmail);
-    const snd = sender[0];
-    const rec = receiver[0];
+    const senderArr = await getUsers(senderEmail);
+    const receiverArr = await getUsers(receiverEmail);
+    const sender = senderArr[0];
+    const receiver = receiverArr[0];
     const friendReqObj = {};
 
-    if(!receiverEmail || !rec){
+    if(!receiverEmail || !receiver){
         throw new Error("No such user")
     }
-    friendReqObj.userEmail = snd.userEmail;
-    friendReqObj.userName = snd.userName;
+    if(senderEmail === receiverEmail){
+        throw new Error("Forever alone")
+    }
+    friendReqObj.userEmail = sender.userEmail;
+    friendReqObj.userName = sender.userName;
 
-    rec.friendRequests.push(friendReqObj);
+    receiver.friendRequests.push(friendReqObj);
 
-    return rec.save();
+    return receiver.save();
 };
 
 async function checkFriendRequests(userEmail){
@@ -66,28 +69,28 @@ async function acceptFriendRequest(receiverEmail, senderEmail){
         throw new Error("No such request");
     }
 
-    const receiver = await getUsers(receiverEmail);
-    const sender = await getUsers(senderEmail);
-    const rec = receiver[0];
-    const snd = sender[0];
+    const receiverArr = await getUsers(receiverEmail);
+    const senderArr = await getUsers(senderEmail);
+    const receiver = receiverArr[0];
+    const sender = senderArr[0];
     const senderObj = {};
     const receiverObj = {};
-    const requests = rec.friendRequests;
+    const requests = receiver.friendRequests;
     let foundRequest = false;
 
     for(let i = 0; i < requests.length; i++){
         if(requests[i].userEmail === senderEmail){
             foundRequest = true;
 
-            senderObj.userEmail = snd.userEmail;
-            senderObj.userName = snd.userName;
+            senderObj.userEmail = sender.userEmail;
+            senderObj.userName = sender.userName;
 
-            receiverObj.userEmail = rec.userEmail;
-            receiverObj.userName = rec.userName;
+            receiverObj.userEmail = receiver.userEmail;
+            receiverObj.userName = receiver.userName;
 
-            rec.userFriends.push(senderObj);
-            snd.userFriends.push(receiverObj);
-            rec.friendRequests.pull(senderObj);
+            receiver.userFriends.push(senderObj);
+            sender.userFriends.push(receiverObj);
+            receiver.friendRequests.pull(senderObj);
         }
     }
 
@@ -95,28 +98,43 @@ async function acceptFriendRequest(receiverEmail, senderEmail){
         throw new Error("No such request");
     }
 
-    rec.save();
-    snd.save();
+    receiver.save();
+    sender.save();
 
-    return rec.userFriends;
+    return receiver.userFriends;
+};
+
+async function rejectFriendRequest(senderEmail){
+    if(!senderEmail){
+        throw new Error("No such request");
+    }
+
+    const senderArr = await getUsers(senderEmail);
+    const sender = senderArr[0];
+
+    sender.friendRequests.splice(sender.friendRequests.indexOf(receiverEmail), 1);
+
+    sender.save();
+
+    return rec.friendRequests;
 };
 
 async function deleteFriend(userEmail, friendEmail){
     if(!friendEmail){
         throw new Error("No friend to delete");
     }
-    const user = await getUsers(userEmail);
-    const friend = await getUsers(friendEmail);
-    const usr = user[0];
-    const frnd = friend[0];
+    const userArr = await getUsers(userEmail);
+    const friendArr = await getUsers(friendEmail);
+    const user = userArr[0];
+    const friend = friendArr[0];
 
-    usr.userFriends.splice(usr.userFriends.indexOf(friendEmail), 1);
-    frnd.userFriends.splice(frnd.userFriends.indexOf(userEmail), 1);
+    user.userFriends.splice(user.userFriends.indexOf(friendEmail), 1);
+    friend.userFriends.splice(friend.userFriends.indexOf(userEmail), 1);
 
-    usr.save();
-    frnd.save();
+    user.save();
+    friend.save();
 
-    return usr.userFriends;
+    return user.userFriends;
 };
 
 router.get('/getusers', async (req, res) => {
@@ -133,7 +151,7 @@ router.get('/getusers', async (req, res) => {
         return res.status(404).json({error: "No such user"});
     }
 
-    res.status(200).json({users: result})
+    res.status(200).json({users: result});
 });
 
 router.get('/getfriends', async (req, res) => {
@@ -148,7 +166,7 @@ router.get('/getfriends', async (req, res) => {
     res.status(200).json({userFriends: friends})
 });
 
-router.delete('/deletefriend', async (req, res) => {
+router.delete('/deletefriend', checkSession, errorHandler, async (req, res) => {
     let result;
     const friendEmail = req.body.friendEmail;
 
@@ -157,7 +175,7 @@ router.delete('/deletefriend', async (req, res) => {
         return res.status(200).json({message: "Friend was deleted", result: result});
     }
     catch(exeption){
-        return res.status(400).json({error: exeption.message})
+        return res.status(400).json({error: exeption.message});
     }
 });
 
@@ -169,17 +187,18 @@ router.post('/sendfriendrequest', checkSession, errorHandler, async (req, res) =
         return res.status(200).json({message: "Request was sent", result: result});
     }
     catch(exeption){
-        return res.status(400).json({error: exeption.message})
+        return res.status(400).json({error: exeption.message});
     }
-})
+});
 
 router.get('/checkfriendrequest', checkSession, errorHandler, async (req, res) => {
     const result = await checkFriendRequests(req.session.userEmail);
+
     if(!result){
-        return res.status(400).json({error: "Error"})
+        return res.status(400).json({error: "Error"});
     }
-    res.status(200).json({friendRequests: result})
-})
+    res.status(200).json({friendRequests: result});
+});
 
 router.post('/acceptfriendrequest', checkSession, errorHandler, async (req, res) => {
     let result;
@@ -191,7 +210,20 @@ router.post('/acceptfriendrequest', checkSession, errorHandler, async (req, res)
     catch(exeption){
         return res.status(400).json({error: exeption.message})
     }
-})
+});
+
+router.post('/rejectfriendrequest', checkSession, errorHandler, async (req, res) => {
+    let result;
+    const friendEmail = req.body.friendEmail;
+
+    try{
+        result = await rejectFriendRequest(friendEmail);
+        return res.status(200).json({message: "Request was rejected", result: result});
+    }
+    catch(exeption){
+        return res.status(400).json({error: exeption.message});
+    }
+});
 
 router.post('/registration', async (req, res) => {
     let result;
@@ -201,7 +233,7 @@ router.post('/registration', async (req, res) => {
         return res.status(200).json({message: "User created succesfully", user: result});
     }
     catch(exeption){
-        res.status(400).json({error: exeption.message})
+        res.status(400).json({error: exeption.message});
     }
 });
 
