@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const mongoStore = require('connect-mongo')(expressSession);
 const morgan = require('morgan');
 
-const config = require('./config/default');
+const config = require('./config/default.js');
 const users = require('./routes/users');
 const login = require('./routes/login');
 const check_logout = require('./routes/check_logout');
